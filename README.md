@@ -6,6 +6,10 @@
 
 <br/>
 
+### 🚀 Releases June 15, 2026
+
+<br/>
+
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![OpenRouter](https://img.shields.io/badge/OpenRouter-Powered-7c3aed?style=for-the-badge&logo=openai&logoColor=white)](https://openrouter.ai)
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
