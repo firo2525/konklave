@@ -24,13 +24,24 @@
 
 ---
 
-## 🎬 Demo
+## 🎬 Screenshots
 
-> _Full TUI screencast and demo GIF coming at release — **June 15, 2026**_
+<div align="center">
 
-<!-- screenshot: full TUI -->
-<!-- screenshot: pipeline progress bar -->
-<!-- screenshot: per-agent cost breakdown -->
+**Full pipeline run — Agents · Chat · Pipeline graph · Live cost tracking**
+![Pipeline run](docs/screenshot-pipeline.png)
+
+<br/>
+
+**Swarm mode — 6 Researchers running in parallel, all writing findings simultaneously**
+![Swarm of researchers](docs/screenshot-swarm.png)
+
+<br/>
+
+**Architect planning a large feature — 6 Coders spawned in parallel**
+![Architect with parallel coders](docs/screenshot-architect.png)
+
+</div>
 
 ---
 
