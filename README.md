@@ -45,6 +45,16 @@
 **Architect planning a large feature — 6 Coders spawned in parallel**
 ![Architect with parallel coders](docs/screenshot-architect.png)
 
+<br/>
+
+**Web Dashboard — live runs, eval comparison, settings**
+![Konklave dashboard with eval comparison](docs/screenshot-eval-dashboard.png)
+
+<br/>
+
+**Eval results in the terminal — solo vs council, head to head**
+![Eval results table in the CLI](docs/screenshot-eval-cli.png)
+
 </div>
 
 ---
@@ -213,6 +223,60 @@ Swap any role to any model on [OpenRouter](https://openrouter.ai/models) — use
 
 ---
 
+## 📊 Benchmarks
+
+We run Konklave against a suite of self-contained coding tasks (each with a hidden test file) and score by the fraction of tests that pass. To keep it **fair, every configuration runs the exact same model** — `google/gemini-2.5-flash-lite` — so the comparison measures the *orchestration*, not a model upgrade. Three configurations, head to head:
+
+- **solo** — minimal pipeline, straight to code (no review)
+- **council_same** — the full pipeline: architect → coder → reviewer → tester → auditor
+- **council_diverse** — the full pipeline with the orchestration turned up: **swarm high + autonomous work mode**
+
+**Latest run — 2026-06-07 · 5 tasks per config · all on `gemini-2.5-flash-lite`**
+
+| Configuration | Pass rate | Mean score | Mean cost | Mean time |
+|---------------|:---------:|:----------:|:---------:|:---------:|
+| `solo` | 20% (1/5) | 54% | $0.0026 | 8s |
+| `council_same` | 40% (2/5) | 83% | $0.018 | 5m 8s |
+| **`council_diverse`** | **80% (4/5)** | **98%** | **$0.072** | **57m** |
+
+<div align="center">
+
+![Eval results table in the CLI](docs/screenshot-eval-cli.png)
+
+</div>
+
+**Takeaway:** with the **same model in every seat**, just adding the multi-agent pipeline (review + test + audit) doubles the pass rate over a single call (`solo` 20% → `council_same` 40%), and turning the orchestration up — swarm high + autonomous looping — doubles it again to **80%**, lifting the mean test score from 54% → 98%. The gains here come purely from **how the agents work together**, not from a stronger model.
+
+### 🤖 Model under test
+
+All three configurations ran on a single, cheap model so no config has a model advantage:
+
+| Configuration | Model | What's different |
+|---------------|-------|------------------|
+| `solo` | `google/gemini-2.5-flash-lite` | minimal pipeline — straight to code |
+| `council_same` | `google/gemini-2.5-flash-lite` | full pipeline — review, test, audit |
+| `council_diverse` | `google/gemini-2.5-flash-lite` | full pipeline **+ swarm high + autonomous work mode** |
+
+> This isolates the value of the **orchestration itself**. In real use you can go further and assign a *different model family per role* (see [Default Model Panel](#-default-model-panel)) so independent models catch each other's blind spots on top of these gains.
+
+> Cost and time scale with depth — deeper orchestration thinks longer and harder. Use the [work modes](#-work-modes) to dial the trade-off for your task. Full per-task results: [`eval_results/`](eval_results/).
+
+---
+
+## 💡 Why This Works — Buy Quality With Cheap Tokens
+
+Here's the whole idea in one sentence: **spend more cheap tokens instead of paying for an expensive model — and let it happen on its own.**
+
+A single call to a small, cheap model gets you a small, cheap answer (`solo`: 20% pass rate). But the *same cheap model*, when it's allowed to **review its own work, run the tests, see the failures, fix them, and loop again — autonomously — climbs to 80%**. Same model. The only thing that changed is that it kept working.
+
+- 💸 **Cheap tokens, premium results.** A frontier model charges a premium per token for one shot. Konklave takes a model that costs a fraction of that and simply *uses more of it* — many small, cheap passes add up to an answer that rivals (or beats) the expensive one-shot, at a lower model tier.
+- 🤖 **Fully autonomous — you don't babysit it.** You don't re-prompt, you don't paste error messages back in, you don't say "now write tests." The pipeline reviews, tests, audits, and re-tries by itself until the Auditor is satisfied (or the budget cap stops it). The extra token burn is *automatic*.
+- 🔁 **More tokens are the feature, not a bug.** Yes — `council_diverse` uses far more tokens than a single call. That's the point: those tokens *are* the quality. You're trading something cheap (tokens from a small model) for something valuable (a correct, tested result) — and you set the ceiling with [work modes](#-work-modes) and a budget cap.
+
+> **Bottom line:** don't pay for a smarter model — let a cheaper one think longer, automatically. More token burn, fully autonomous, better output.
+
+---
+
 ## 🚀 Installation
 
 **Requirements:** Python 3.11+ · [OpenRouter API key](https://openrouter.ai/keys) (free tier available)
@@ -259,6 +323,38 @@ Config lives at `~/.konklave/config.toml`. Your API key is stored in the **OS ke
 
 ---
 
+## 📊 Web Dashboard
+
+A FastAPI + browser dashboard for everything that's hard to see in a terminal: live runs, full conversation history, **eval comparisons**, and settings.
+
+```bash
+# Launch the dashboard on http://localhost:8000
+python -m uvicorn konklave.dashboard.app:app --host 127.0.0.1 --port 8000
+```
+
+> **Windows:** double-click `start_dashboard.bat` — it sets up the environment, opens your browser, and starts the server.
+
+- 📜 Browse and export any past session (Markdown / JSON)
+- 📈 Compare eval runs side by side (the screenshot above)
+- ⚙️ Edit configuration and per-role models from the browser
+- 🔒 Binds to `127.0.0.1` only, with a same-origin CSRF guard — local by default
+
+---
+
+## 🧠 Persistent Memory
+
+Konklave remembers across sessions. Two human-editable files plus full-text search over every past run:
+
+| Store | What it holds |
+|-------|---------------|
+| `MEMORY.md` | Workspace-scoped facts the agents learn while working (auto-compacted when it grows too large) |
+| `USER.md` | Global facts about you and your preferences, applied to every workspace |
+| Session DB | SQLite + **FTS5** full-text index over all past messages — agents can search what happened before |
+
+Memory lives under `~/.konklave/` and is **never committed** (it's in `.gitignore`) — it can contain conversation history and personal context. Agents read it at the start of a run and can write new facts via the memory tool.
+
+---
+
 ## 💻 Platform Support
 
 | Platform | Status |
@@ -266,6 +362,28 @@ Config lives at `~/.konklave/config.toml`. Your API key is stored in the **OS ke
 | Windows 10 / 11 | ✅ |
 | macOS 13+ | ✅ |
 | Linux | ✅ |
+
+---
+
+## 🧪 Development & Tests
+
+Konklave ships with a **628-test** suite (unit, smoke, and integration) covering the pipeline engine, agents, tools, memory, the dashboard API, and the eval harness.
+
+```bash
+# Install with dev extras
+pip install -e ".[dev]"
+
+# Run the full suite
+pytest
+
+# Skip the TUI tests (need a real terminal) and the slow ones
+pytest -m "not tui and not slow"
+
+# Run the benchmarks yourself (real OpenRouter calls — costs money)
+konklave eval run --configs solo,council_same,council_diverse
+```
+
+> **Windows:** `test.bat` runs the suite; `eval_run.bat` runs the benchmarks.
 
 ---
 
