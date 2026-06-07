@@ -110,22 +110,22 @@ Each role runs on **the model you choose**. Mix providers freely — a DeepSeek 
 One flag to control how deep the pipeline goes:
 
 ```bash
-konklave run "your task" --work sehr_schnell   # ⚡ instant — straight to code, no research
-konklave run "your task" --work schnell        # 🚀 quick research + light review
-konklave run "your task"                       # ⚖️  balanced default
-konklave run "your task" --work lang           # 🔬 multi-round review and testing
-konklave run "your task" --work autonom        # 🤖 autonomous loop until PERFECT
+konklave run "your task" --work very_fast    # ⚡ instant — straight to code, no research
+konklave run "your task" --work fast         # 🚀 quick research + light review
+konklave run "your task"                     # ⚖️  balanced default
+konklave run "your task" --work deep         # 🔬 multi-round review and testing
+konklave run "your task" --work autonomous   # 🤖 autonomous loop until PERFECT
 ```
 
 | Mode | Speed | What runs |
 |------|:-----:|-----------|
-| `sehr_schnell` | ⚡⚡⚡ | No research → code → done |
-| `schnell` | ⚡⚡ | One researcher, quick review |
-| `mitte` | ⚖️ | Research → plan → code → review → test |
-| `lang` | 🔬 | Multi-researcher, multiple review/test rounds |
-| `sehr_lang` | 🧬 | Exhaustive edge cases, trade-off exploration |
-| `autonom` | 🤖 | Loop until Auditor approves (with budget cap) |
-| `autonom-endlos` | ♾️ | Loop until you stop it |
+| `very_fast` | ⚡⚡⚡ | No research → code → done |
+| `fast` | ⚡⚡ | One researcher, quick review |
+| `balanced` | ⚖️ | Research → plan → code → review → test |
+| `deep` | 🔬 | Multi-researcher, multiple review/test rounds |
+| `exhaustive` | 🧬 | Exhaustive edge cases, trade-off exploration |
+| `autonomous` | 🤖 | Loop until Auditor approves (with budget cap) |
+| `auto-endless` | ♾️ | Loop until you stop it |
 
 ---
 
@@ -136,7 +136,7 @@ Agents can spawn their own helpers for genuinely independent sub-tasks. Three Re
 ```
 :swarm off            →  each agent works alone
 :swarm encouraged     →  agents use parallel helpers when it makes sense  (default)
-:swarm aggressiv      →  maximally fan out work to sub-agents
+:swarm aggressive     →  maximally fan out work to sub-agents
 ```
 
 ---
@@ -148,9 +148,9 @@ Inject a message mid-run, steer the direction, or just watch. Slash commands wor
 | Command | What it does |
 |---------|-------------|
 | `:say "focus on auth"` | Inject a message into the active agent |
-| `:work autonom` | Switch work mode on the fly |
-| `:swarm aggressiv` | Turn up parallel agent spawning |
-| `:ask proaktiv` | Make the Architect ask you more questions |
+| `:work autonomous` | Switch work mode on the fly |
+| `:swarm aggressive` | Turn up parallel agent spawning |
+| `:ask proactive` | Make the Architect ask you more questions |
 | `:cost` | Show live USD spend per agent |
 | `:models` | Reassign any role to a different model |
 | `:exit` | Clean stop at the next step boundary |
