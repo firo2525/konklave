@@ -16,7 +16,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![OpenRouter](https://img.shields.io/badge/OpenRouter-Powered-7c3aed?style=for-the-badge&logo=openai&logoColor=white)](https://openrouter.ai)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-AGPL%20v3-22c55e?style=for-the-badge)](LICENSE)
 [![Release](https://img.shields.io/badge/Release-June%2015%2C%202026-f97316?style=for-the-badge)](https://github.com/firo2525/konklave/releases)
 
 <br/>
@@ -440,7 +440,17 @@ konklave eval run --configs solo,council_same,council_diverse
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE).
+Konklave is **dual-licensed**.
+
+- 🆓 **Open source — GNU AGPL-3.0-or-later** (see [LICENSE](LICENSE)).
+  Free for personal, academic, and open-source use. Note: the AGPL is strong
+  copyleft — if you modify Konklave or offer it to others over a network, you
+  must release your full source under the AGPL too.
+- 💼 **Commercial license** — for companies that want to use Konklave in a
+  closed-source product or internal tool **without** the AGPL's source-disclosure
+  obligations. See [COMMERCIAL-LICENSE.md](COMMERCIAL-LICENSE.md).
+
+© 2026 firo2525. All rights reserved.
 
 ---
 
