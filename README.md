@@ -145,6 +145,49 @@ Agents can spawn their own helpers for genuinely independent sub-tasks. Three Re
 
 ---
 
+## 🌐 Web Search — Live Internet Access
+
+Let agents pull in current information — library versions, release notes, recent
+events, exact error strings — via OpenRouter's native web search. No extra API
+key or search provider needed. Three levels:
+
+```
+:websearch off      →  no search (training data only)          (default)
+:websearch auto     →  a web_search tool the agent calls itself when it needs to
+:websearch always   →  every request grounded with live web search
+```
+
+- **`auto`** gives each agent a `web_search` tool; it decides when current info
+  is worth a lookup, then can `web_fetch` a cited URL for the full page.
+- **`always`** grounds *every* model request — most thorough, adds a small
+  per-search cost.
+
+---
+
+## 🧠 Semantic Code Search — Find Code by Meaning
+
+Beyond exact-string `grep`, agents can search the workspace **semantically**:
+"where do we validate the API key" finds the right function even if it never
+uses those words. Powered by embeddings (default model
+`google/gemini-embedding-2`), routed through OpenRouter.
+
+```
+:index on              →  enable; agents get a semantic_search tool
+:index off             →  disable
+:index status          →  model, dimensions, indexed files/chunks
+:index model <id>      →  pick a different embedding model
+:index rebuild         →  (re)embed the workspace now
+```
+
+- **Incremental & cached.** Only changed files are re-embedded (content-hashed);
+  the index persists to `~/.konklave/index/` so a fresh session loads instantly.
+- **Memory too.** With the index on, `MEMORY.md` search is ranked semantically
+  under the same toggle — agents recall past knowledge by meaning, not keyword.
+- Configurable via `:index`, the **Settings** screen, or `~/.konklave/config.toml`
+  (`semantic_index`, `embedding_model`, `embedding_dimensions`).
+
+---
+
 ## 🎮 Human-in-the-Loop
 
 Inject a message mid-run, steer the direction, or just watch. Slash commands work in the TUI **at any time**:
@@ -155,6 +198,8 @@ Inject a message mid-run, steer the direction, or just watch. Slash commands wor
 | `:work autonomous` | Switch work mode on the fly |
 | `:swarm aggressive` | Turn up parallel agent spawning |
 | `:ask proactive` | Make the Architect ask you more questions |
+| `:websearch auto` | Let agents search the live web (off · auto · always) |
+| `:index on` | Semantic code + memory search via embeddings |
 | `:cost` | Show live USD spend per agent |
 | `:models` | Reassign any role to a different model |
 | `:exit` | Clean stop at the next step boundary |
@@ -356,6 +401,8 @@ Konklave remembers across sessions. Two human-editable files plus full-text sear
 | Session DB | SQLite + **FTS5** full-text index over all past messages — agents can search what happened before |
 
 Memory lives under `~/.konklave/` and is **never committed** (it's in `.gitignore`) — it can contain conversation history and personal context. Agents read it at the start of a run and can write new facts via the memory tool.
+
+> With the [semantic index](#-semantic-code-search--find-code-by-meaning) enabled (`:index on`), `MEMORY.md` recall is ranked by **meaning** (embeddings) instead of keywords — agents surface relevant past knowledge even when the wording differs.
 
 ---
 
