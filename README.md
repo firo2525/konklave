@@ -1,7 +1,9 @@
 <div align="center">
-# http://konklave.info
+ 
+http://konklave.info
  <br/>
-# 🏛️ Konklave
+ 
+🏛️ Konklave
 
 ### A council of AI models that thinks, codes, reviews, and ships — together.
 
